@@ -9,7 +9,12 @@ import time
 
 
 
-print(os.getcwd()) #get current working directory
+
+
+#resources:
+#https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
+
+
 
 
 dump_folder_path ='C:\\Users\Mustafa\\Desktop\\Download Folder' #browser default download folder
@@ -19,32 +24,36 @@ print(os.listdir(dump_folder_path))
 
 # this dictionary maps the certain keywords (part of file names) to the corresponding folder which are the 'keys'
 key_words = {
-    'Phy1722' : ['physics.jpg', 'download.jpg', 'download1.jpg'] , 
-    'fls2581' : ['french'] ,
-    'mat1722' : ['mathematics'],
-    'seg2900' : ['seg'] ,
-    'iti1520' : ['information technology'] ,
-    'eng1112' : ['english']
+    'PHY1722' : 'oad', 
+    'fls2581' : 'french' ,
+    'mat1722' : 'mathematics',
+    'seg2900' : 'software' ,
+    'iti1520' : 'information technology' ,
+    'eng1112' : 'english'
     }
 
-print('l' in 'download.jpg')
 
-print(key_words['Phy1722'])
 
-target_file = 'download.jpg' #testing
-
+p = dict(zip(key_words.values(),key_words.keys()))
+print(p)
 while True: #this program will have to run as a background process as long as the student account is logged in
-    incoming_files= os.listdir(dump_folder_path)
+    incoming_files = os.listdir(dump_folder_path)
     
     for key in key_words:
         
-        for key_word in key_words[key]: #goes through the list of key words associated with each key
-            if incoming_files.__contains__(key_word):
-                print('file found')
-                shutil.move(dump_folder_path + '\\' + key_word, dump_folder_path + '\\PHY1722')
-                
+        for trigger_substring in key_words[key]: #goes through the list of key words associated with each key
+            
+            for file in incoming_files: # loop to check every file against trigger substring
+                if trigger_substring in file:
+                    print(trigger_substring)
+                    print(file + ' found. Moving to correct folder')
+                    corr_folder = p[trigger_substring]
+                    shutil.move(dump_folder_path + '\\' + file, dump_folder_path + '\\' + corr_folder) # move file to corresponding folder
+                    
         
-    time.sleep(3)#only runs every 3 seconds so as to not consume all CPU cycles
+    time.sleep(10)#only runs every x seconds so as to not consume all CPU cycles
 
 
-#def move_file():
+#def move_file()
+
+
