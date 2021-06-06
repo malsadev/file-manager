@@ -6,54 +6,57 @@
 import os
 import shutil
 import time
+from fuzzywuzzy import fuzz #String comparision methods
 
 
 
 
+#returns the key(folder name) whose keywords match best with the file name
+def getKey(file, key_words):
+    Highest_Ratio = 0
+    Best_Key = 'PHY1722'
+    for key in key_words:
+        ratio = fuzz.token_set_ratio(file, key_words[key])
+        if (ratio > Highest_Ratio):
+            Highest_Ratio = ratio
+            Best_Key = list(key_words.keys())[list(key_words.values()).index(key_words.get(key))]
+    
+    return Best_Key
+    
+    
+    
+    
 
-#resources:
-#https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
+download_folder_path ='C:\\Users\\Mustafa\\Desktop\\Download Folder' #browser default download folder
+courses_directory = 'C:\\Users\\Mustafa\\Desktop\\Courses'
+print(os.listdir(download_folder_path))
 
 
-
-
-dump_folder_path ='C:\\Users\Mustafa\\Desktop\\Download Folder' #browser default download folder
-
-print(os.listdir(dump_folder_path))
-
-
-# this dictionary maps the certain keywords (part of file names) to the corresponding folder which are the 'keys'
+# this dictionary maps the keywords (values) (substrings of file names) to the corresponding folder which are the keys
 key_words = {
-    'PHY1722' : 'oad', 
-    'fls2581' : 'french' ,
-    'mat1722' : 'mathematics',
-    'seg2900' : 'software' ,
-    'iti1520' : 'information technology' ,
-    'eng1112' : 'english'
+    'PHY1722' : 'phyysics, phy', 
+    'FLS2581' : 'french, fls' ,
+    'MAT1722' : 'mathematics, mat',
+    'SEG2900' : 'software, seg' ,
+    'ITI1520' : 'information technology, iti' ,
+    'ENG1112' : 'english, eng'
     }
 
 
 
-p = dict(zip(key_words.values(),key_words.keys()))
-print(p)
+
 while True: #this program will have to run as a background process as long as the student account is logged in
-    incoming_files = os.listdir(dump_folder_path)
-    
-    for key in key_words:
+    time.sleep(10)#only runs every x seconds so as to not consume all CPU cycl
+    incoming_files = os.listdir(download_folder_path)
+       
+    for file in incoming_files: # loop to check every file against trigger substring
+        print(file)
+        corr_folder = getKey(file, key_words)
+        shutil.move(download_folder_path + '\\' + file, courses_directory + '\\' + corr_folder) # move file to corresponding folder
         
-        for trigger_substring in key_words[key]: #goes through the list of key words associated with each key
-            
-            for file in incoming_files: # loop to check every file against trigger substring
-                if trigger_substring in file:
-                    print(trigger_substring)
-                    print(file + ' found. Moving to correct folder')
-                    corr_folder = p[trigger_substring]
-                    shutil.move(dump_folder_path + '\\' + file, dump_folder_path + '\\' + corr_folder) # move file to corresponding folder
-                    
         
-    time.sleep(10)#only runs every x seconds so as to not consume all CPU cycles
+    es
 
 
-#def move_file()
 
 
